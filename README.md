@@ -1,4 +1,5 @@
 ### wk_WKSEALS-2020
+![Alt text](documents/seal.png?raw=true "Title")
 # ICES &amp; NAMMCO Joint Workshop on Seal Modelling
 Welcome to the GitHub repository for model code and data to be used during the workshop! 
 
