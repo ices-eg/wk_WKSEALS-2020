@@ -1,0 +1,25 @@
+Package: rSPAMM
+Type: Package
+Title: Population dynamics model for harp and hooded seals
+Version: 0.1.0
+Author: c(person("Tor Arne","Oigard",role=c("aut","cre"), email="tor.arne.oigard@gmail.com"),
+	    person("Martin","Biuw",role=c("aut","cre"),email = "martin.biuw@hi.no"))
+Maintainer: Martin Biuw <martin.biuw@hi.no>
+Description: Population dynamics modelling for harp and hooded seals.
+License: GPL-2
+Encoding: UTF-8
+LazyData: TRUE
+URL: https://github.com/NorskRegnesentral/rSPAMM
+RoxygenNote: 7.0.2
+Imports:
+  TMB, 
+  RcppEigen,
+  ggplot2
+LinkingTo: 
+  TMB, 
+  RcppEigen
+Suggests: 
+  knitr,
+  roxygen2,
+  rmarkdown
+VignetteBuilder: knitr
