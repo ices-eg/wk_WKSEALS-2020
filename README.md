@@ -1,4 +1,5 @@
 ### wk_WKSEALS-2020
+![Alt text](documents/SealSm.png?raw=true "Photo: Tore Haug")
 # ICES &amp; NAMMCO Joint Workshop on Seal Modelling
 Welcome to the GitHub repository for model code and data to be used during the workshop! 
 
@@ -6,4 +7,4 @@ The basic folder structure is relatively self-explanatory. The `models` and `dat
 
 For an example of how data and model code can be repressnted in the various unit subdirectories, you can take a look at the `Norway` subdirectories within `models` and `data`.
 
-![Alt text](documents/ICES.png?raw=true)  ![Alt text](documents/SealSm.png?raw=true "Photo: Tore Haug")  ![Alt text](documents/nammco.jpg?raw=true)
+![Alt text](documents/ICES.png?raw=true)    ![Alt text](documents/nammco.jpg?raw=true)
