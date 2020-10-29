@@ -1,5 +1,5 @@
 ### wk_WKSEALS-2020
-![Alt text](documents/SealSm.png?raw=true "Photo: Tore Haug")
+![Alt text](documents/SealSm.png?raw=true "Photo: Tore Haug") ![Alt text](https://www.google.com/url?sa=i&url=https%3A%2F%2Fnammco.no%2F&psig=AOvVaw2gqNGoJ1LlUQlAYFMt6Fiv&ust=1604097543536000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPiPwZ3v2uwCFQAAAAAdAAAAABAP)
 # ICES &amp; NAMMCO Joint Workshop on Seal Modelling
 Welcome to the GitHub repository for model code and data to be used during the workshop! 
 
