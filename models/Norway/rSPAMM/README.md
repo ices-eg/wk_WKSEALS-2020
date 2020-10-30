@@ -1,4 +1,4 @@
-<img src="rSPAMM/instructions/figures/Logos.png" align="right" height="50px"/>
+<img src="instructions/figures/Logos.png" align="right" height="50px"/>
 
 # The rSPAMM package
 
