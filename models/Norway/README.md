@@ -11,9 +11,13 @@ The *rSPAMM* package is a R-package for performing assessment of harp and hooded
 
 # Installation
 
-1. Make sure that the *rSPAMM* folder is the working directory.
-2. Source the *install_rSPAMM.R* file in the *scripts* folder, e.g.,
+Make sure that the *rSPAMM* folder is the working directory.
 
+There are two ways to install the package:
+
+1. In *RStudio* you select *Build -> Install and Restart* or press down *ctrl+Shift+B*. 
+
+2. Source the *install_rSPAMM.R* file in the *scripts* folder, e.g.,
 
 ```{r}
 source("scripts/install_rSPAMM.R")
