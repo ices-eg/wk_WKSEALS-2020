@@ -8,21 +8,12 @@
 The *rSPAMM* package is a R-package for performing assessment of harp and hooded seals in the West Ice (along the coast of Greenland) and the East Ice. Assessment of other populations is possible as long as similar input data is available. The package fits available pup production data and models the total abundance of the population of interest. Various catch options and the impact of the future abundance can be explored and graphical tools to visualize the results is available. 
 
 
-Instructions on how to use *rSPAMM* is found in the vignette.
+Instructions on how to use *rSPAMM* is found in the vignette which will be available when installing the R package. 
 
 
 # Installation
 
-The rSPAMM package depends on the following R-packages
-
-  - *TMB*
-  - *ggplot2*
-  - *RcppEigen*
-  
-These dependencies will be automatically installed when installing the rSPAMM package.
-
-The most recent version of *rSPAMM* is hosted on a git repository at
-<https://github.com/NorskRegnesentral/rSPAMM.git>.
+To run the model and the various functions for assessment it is recommended to install the *rSPAMM* package as a R package. It is also possible to run the model by sourcing the relevant files in the /R folder.
 
 
 To install the R-package directly from the repository use the following command (note: the R-package devtools has to be installed first)

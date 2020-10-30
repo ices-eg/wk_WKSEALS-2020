@@ -13,7 +13,7 @@ plotRes(
   plotProjMean = TRUE,
   width = 15,
   height = 10,
-  grDev = TRUE
+  grDev = FALSE
 )
 }
 \arguments{
