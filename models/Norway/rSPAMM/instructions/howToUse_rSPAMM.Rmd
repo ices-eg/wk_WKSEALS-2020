@@ -43,7 +43,7 @@ The population dynamics model use historical catch records, fecundity rates, age
 
 
 ## Demo data
-When cloning the repository both a demo data set is installed. In addition a full data set is available in the *wk_WKSEALS-2020/data/Norway/* folder. 
+When cloning the repository and installing the *rSPAMM* R package a demo data set is installed. In addition a full data set is available in the *wk_WKSEALS-2020/data/Norway/* folder. 
 
 The demo data is reproductive data, catch data, pup production estimates and priors used for population dynamics modelling of the harp seal population in the East Ice (White Sea).
 
