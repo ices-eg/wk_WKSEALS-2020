@@ -192,7 +192,7 @@ data$pupProductionData
 
 ```
 
-# Parameters to be estimed and how to load them
+# Parameters to be estimated and how to load them
 As briefly mentioned earlier the population dynamics model is described by three parameters. The initial population size $K$, the mortality of the 1+ population $M$, and the pup mortality $M_0$. The initial population size is the population size for the year the model is fit from, and this is determined by the availability of the catch data. The earliest catch data is from 1946, so the model is fit from 1946 and up to present. It also predicts the population dynamics into the future, and this is default set to 15 years. 
 
 To load the initial values of the parameters to be estimated run:
