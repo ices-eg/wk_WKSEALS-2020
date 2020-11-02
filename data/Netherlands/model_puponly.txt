@@ -1,0 +1,98 @@
+model {
+    
+      # SUMMER model
+           Nat[2,1] <- alpha.pup * pup.uk[1]
+           Nat[3,1] <- 0
+           Nat[4,1] <- 0
+           Nat[5,1] <- 0
+           Nat[6,1] <- 0
+           Nat[7,1] <- ad_ini
+           Nat[1,1] <- fec.ad * Nat[7,1] * frac.fem.cut
+           
+           for (t in 2:tmax){
+             Nat[1,t] <- fec.ad * frac.fem.cut * (Nat[7,t])
+             Nat[2,t] <- alpha.pup * pup.uk[t] + surv.pup * Nat[1,t-1]
+             Nat[3,t] <- surv.ad * Nat[2,t-1]
+             Nat[4,t] <- surv.ad * Nat[3,t-1]
+             Nat[5,t] <- surv.ad * Nat[4,t-1]
+             Nat[6,t] <- surv.ad * Nat[5,t-1]
+             Nat[7,t] <- surv.ad * (Nat[6,t-1] + Nat[7,t-1])
+             }
+        
+           for (j in 1:K.pup){
+             pup[j] ~ dpois(N_est1[j])
+             N_est1[j] <- 0.001+ Nat[1,yr.pup[j]]*pup_prop[j]
+             logit(bp[j])<- -mean_day*beta1+beta1*daynr[j] -beta1*beta2*yr.pup[j]
+             logit(lp[j])<- -mean_day*beta1+beta1*daynr[j] -beta1*beta2*yr.pup[j]-beta1*pup_dur
+             pup_prop[j] <- bp[j]-lp[j]
+           }
+        
+           Nat.cut[2,1] <- alpha.pup.cut * pup.uk[1]
+           Nat.cut[3,1] <- 0
+           Nat.cut[4,1] <- 0
+           Nat.cut[5,1] <- 0
+           Nat.cut[6,1] <- 0
+           Nat.cut[7,1] <- ad_ini.cut
+           Nat.cut[1,1] <- fec.ad.cut * Nat.cut[7,1] * frac.fem.cut
+           
+           for (t in 2:tmax){
+             Nat.cut[1,t] <- fec.ad.cut * frac.fem.cut * (Nat.cut[7,t])
+             Nat.cut[2,t] <- alpha.pup.cut * pup.uk[t] + surv.pup.cut * Nat.cut[1,t-1]
+             Nat.cut[3,t] <- surv.ad.cut * Nat.cut[2,t-1]
+             Nat.cut[4,t] <- surv.ad.cut * Nat.cut[3,t-1]
+             Nat.cut[5,t] <- surv.ad.cut * Nat.cut[4,t-1]
+             Nat.cut[6,t] <- surv.ad.cut * Nat.cut[5,t-1]
+             Nat.cut[7,t] <- surv.ad.cut * (Nat.cut[6,t-1] + Nat.cut[7,t-1])
+             }       
+        
+        # Molt-summer model
+           for (k in 1:K.molt){
+             molt[k] ~ dpois(N27[k])
+             N27[k] <- corf.cut * surv.pup.cut * Nat.cut[1,yr.molt[k]] + pow(surv.ad.cut,106/365) * sum(Nat.cut[2:7,yr.molt[k]]) + alpha.molt * tot.uk[yr.molt[k]+1]
+                 }
+                 
+           for (k in 1:K.smr){
+             smr[k] ~ dpois(N17[k])
+             N17[k] <- corf.cut * (surv.pup.cut * Nat.cut[1,yr.smr[k]] + pow(surv.ad.cut,207/365) * sum(Nat.cut[2:7,yr.smr[k]]) + alpha.smr * tot.uk[yr.smr[k]+1])
+                }
+                 
+        # fixed priors (estimated from pup model)
+          phi_a ~ dbeta(1.6,1.2)
+          phi_p ~ dbeta(2.87, 1.78)
+          ad_ini ~ dunif(1,100)
+          alpha.pup ~  dunif(0.0001,0.02)
+          fec_a ~ dbeta(2,1.5)
+          beta2 ~ dunif(-2, 2)
+          beta1 ~ dunif(0.0001,5)
+          mean_day ~ dunif(10,80)
+          pup_dur ~ dunif(26,57)
+           
+        # Fixed priors (correction factor and female:male ratio
+          corf2 ~ dnorm(-1.0935,21.51307) # 1/(0.2156^2)     # informative prior
+          beta_fem ~ dbeta(2,8)         # similar to female:male ratio = 1+gamma(2,0.1) as suggested in SCOS 2012, but with upper limit of 2:1
+                
+        # Priors for estimation (molt and summer model) 
+          alpha.molt ~ dunif(0.00001,1)
+          alpha.smr ~  dunif(0.00001,1)
+                       
+        # derived parameters
+          frac.fem.sto <- (1+beta_fem)/(2+beta_fem)
+          frac.fem.cut <- cut(frac.fem.sto)
+          corf.sto <- exp(corf2)/(exp(corf2)+1)
+          corf.cut <- cut(corf.sto) # cut makes sure that prior does not contribute to likelihood function
+          surv.ad <- 0.8+0.2*phi_a
+          fec.ad <-  0.6+0.4*fec_a
+          surv.pup <- phi_p * surv.ad
+          
+        # Exclude parameters from estimation
+          ad_ini.cut<-cut(ad_ini)
+          alpha.pup.cut<-cut(alpha.pup)
+          beta2.cut<-cut(beta2)
+          beta1.cut<-cut(beta1)
+          mean_day.cut<-cut(mean_day)
+          pup_dur.cut<-cut(pup_dur)
+          surv.ad.cut <- cut(surv.ad)
+          fec.ad.cut <-  cut(fec.ad)
+          surv.pup.cut <- cut(surv.pup)
+                         
+          }
