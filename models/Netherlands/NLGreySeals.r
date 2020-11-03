@@ -12,7 +12,13 @@
 
 #!  SET WORKING DIRECTORY, LOAD DATA AND READ LIBRARIES
 
-  # Rx64 3.0.2
+  # Rx64 3.6.0
+  
+  # Winbugs installation (Windows 10)
+  # Go to https://www.mrc-bsu.cam.ac.uk/software/bugs/the-bugs-project-winbugs/ 
+  # Select Download WinBUGS
+  # Unzip file and copy folder WinBUGS14 into e.g. c:/program_files/
+  # No installation needed
   
   # Load library
     library(boot)
@@ -34,7 +40,7 @@
 
 ################################################################################
 
-    sink("model_puponly.txt")
+    sink("models/Netherlands/Bugs_model_puponly.txt")
     cat("model {
     
       # SUMMER model
@@ -165,9 +171,11 @@
    
   # R2WinBUGS call; calling OpenBUGS requires BRugs package
   # WinBUGS chains are much better mixed than OpenBUGS chains
+    old.wd<-getwd()
+    setwd("models/Netherlands/")
     out <- bugs(data=data.list,
                  parameters.to.save=monitor.puponly,
-                 model.file="model_puponly.txt",
+                 model.file="Bugs_model_puponly.txt",
                  #inits=NULL,
                  inits=inits.list.puponly,       # reading of initial values not working
                  n.chains=n.chains,
@@ -183,7 +191,9 @@
                  #bugs.directory="C:/Program Files (x86)/OpenBUGS/OpenBUGS322",
                  #program=c("OpenBUGS"))
  
- 
+  # Change working directory back
+    setwd(old.wd)
+    
   # Put results into data.frame          
     post <- data.frame(matrix(out$sims.array,ncol=dim(out$sims.array)[3],dimnames=list(NULL,names(out$sims.list))))
   
