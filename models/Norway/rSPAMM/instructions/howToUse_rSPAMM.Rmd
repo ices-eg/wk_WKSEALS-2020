@@ -72,17 +72,19 @@ parameters = harpeast$parameters
 ## Loading the full data set
 The full data set is stored in the repositorys data folder (in the Norway folder).
 
-It does not matter what is set to working directory, but when loading these data to use with the *rSPAMM* you might want to adjust the *dataPath* variable defined below. In this example it is assumed that the working directory is set to the *rSPAMM* model folder, i.e., that the working directory is the root folder of the *rSPAMM* package.
+It does not matter what is set to working directory, but when loading these data to use with the *rSPAMM* **you might want to adjust the *dataPath* variable defined below**. In this example it is assumed that the working directory is set to the *rSPAMM* model folder, i.e., that the working directory is the root folder of the *rSPAMM* package.
 
 In order to load the data you have to specify which population you want to load the data for. The various alternatives are `harpeast`, `harpwest`, and `hooded` (which is the hooded seal population in the West Ice - the ice along the east coast of Greenland). In the examples that follows we will use the `harpeast` population. 
 
 To load the data used you run the following function:
 ```{r eval=FALSE}
-dataPath = "../../../../data/Norway/"
+dataPath1 = "../../../../data/Norway/"
+dataPath2 = "../../../../../data/Norway/"
 population = "harpeast"
-dataFiles = paste0(dataPath,population)
+dataFiles = paste0(dataPath1,population)
 data <- load.data(population = dataFiles)
 ```
+**If dataPath1 does not work, try changing to dataPath2. Most importantly, you just want to specify the path to reflect where your data is stored**.
 
 ```{r echo=FALSE}
 data = harpeast$data

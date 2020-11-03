@@ -111,7 +111,7 @@
 
 \title{How to use the \texttt{rSPAMM} package}
 \author{T. A. Øigård and M. Biuw}
-\date{2020-10-31}
+\date{2020-11-03}
 
 \begin{document}
 \maketitle
@@ -206,11 +206,11 @@ The full data set is stored in the repositorys data folder (in the
 Norway folder).
 
 It does not matter what is set to working directory, but when loading
-these data to use with the \emph{rSPAMM} you might want to adjust the
-\emph{dataPath} variable defined below. In this example it is assumed
-that the working directory is set to the \emph{rSPAMM} model folder,
-i.e., that the working directory is the root folder of the \emph{rSPAMM}
-package.
+these data to use with the \emph{rSPAMM} \textbf{you might want to
+adjust the \emph{dataPath} variable defined below}. In this example it
+is assumed that the working directory is set to the \emph{rSPAMM} model
+folder, i.e., that the working directory is the root folder of the
+\emph{rSPAMM} package.
 
 In order to load the data you have to specify which population you want
 to load the data for. The various alternatives are \texttt{harpeast},
@@ -223,12 +223,17 @@ To load the data used you run the following function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{dataPath =}\StringTok{ "../../../../data/Norway/"}
+\NormalTok{dataPath1 =}\StringTok{ "../../../../data/Norway/"}
+\NormalTok{dataPath2 =}\StringTok{ "../../../../../data/Norway/"}
 \NormalTok{population =}\StringTok{ "harpeast"}
-\NormalTok{dataFiles =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(dataPath,population)}
+\NormalTok{dataFiles =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(dataPath1,population)}
 \NormalTok{data <-}\StringTok{ }\KeywordTok{load.data}\NormalTok{(}\DataTypeTok{population =}\NormalTok{ dataFiles)}
 \end{Highlighting}
 \end{Shaded}
+
+\textbf{If dataPath1 does not work, try changing to dataPath2. Most
+importantly, you just want to specify the path to reflect where your
+data is stored}.
 
 To explore the data object you can
 
