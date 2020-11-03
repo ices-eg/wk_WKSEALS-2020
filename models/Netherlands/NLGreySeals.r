@@ -173,7 +173,7 @@
                  #over.relax=TRUE,          # default is FALSE; for grey seal data, this doesn't seem to make any difference
                  DIC=TRUE,
                  bugs.seed=sample.int(14,1),
-                 bugs.directory="C:/program files/WinBUGS14",
+                 bugs.directory="C:/Program_files/WinBUGS14",
                  program=c("WinBUGS"))
                  #bugs.directory="C:/Program Files (x86)/OpenBUGS/OpenBUGS322",
                  #program=c("OpenBUGS"))
@@ -183,8 +183,8 @@
     post <- data.frame(matrix(out$sims.array,ncol=dim(out$sims.array)[3],dimnames=list(NULL,names(out$sims.list))))
   
   # Save results
-    save(post,n.thin,n.burn,n.updates,n.chains,out,file="winbugs/Winbugs_output/Winbugs_model_results_Single_model_2014_05_24.robj")   
-    save.image("winbugs/Winbugs_output/Winbugs_model_results_with_data_Single_model_2014_05_24.robj")          
+    #save(post,n.thin,n.burn,n.updates,n.chains,out,file="results/Winbugs_model_results_2014_05_24.robj")   
+    save.image("results/Winbugs_model_results_with_data_2020_11_03.rdata")          
 
 
 ################################################################################
@@ -196,10 +196,10 @@
 #! LOAD DATA AND LIBRARIES
    
    # Set working directory
-     setwd("k:/projecten/greyseal_demo/")  
-
+     setwd("C:/github/wk_WKSEALS-2020/data/Netherlands/")
+    
    # Load data
-     load("winbugs/Winbugs_output/Winbugs_model_results_with_data_Single_model_2014_05_24.robj")        
+     load("results/Winbugs_model_results_with_data_2020_11_03.rdata")        
    
    # Load libraries
      library(coda)
