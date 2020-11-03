@@ -21,11 +21,11 @@
     library(fields)
     library(RODBC)
    
-  # Set working directory
-    setwd("C:/github/wk_WKSEALS-2020/data/Netherlands/")
+  # Set github directory
+    setwd("C:/github/wk_WKSEALS-2020")
     
   # Load data
-    load("NLGreySeals.rdata")
+    load("data/Netherlands/NLGreySeals.rdata")
     
                 
 ################################################################################
@@ -142,20 +142,25 @@
 #!  FIT PUP-ONLY MODEL
 
   # MCMC controls
-  # in WinBUGS with n.thin=20 and n.chains=3, each 100 updates takes about an hour
+  # Testing settings below should take ~2-3mins
     n.chains <- 3
-    n.burn <- 100
-    n.updates <- 1000
-    n.thin <- 10
-
-  # initialization for pup-only model 
-    inits.list.puponly <- list(
-        list(phi_a=0.7, phi_p=0.7, ad_ini=5, alpha.pup=0.005, fec_a=0.8, beta2=-1.0, beta1=0.2, mean_day=50, pup_dur=28, corf2=-1.0,alpha.molt=0.001, alpha.smr=0.001, beta_fem=0.25),  # red
-        list(phi_a=0.6, phi_p=0.8, ad_ini=6, alpha.pup=0.010, fec_a=0.6, beta2=-1.3, beta1=0.3, mean_day=70, pup_dur=35, corf2=-1.1,alpha.molt=0.002, alpha.smr=0.002, beta_fem=0.20),  # blue
-        list(phi_a=0.6, phi_p=0.6, ad_ini=5, alpha.pup=0.015, fec_a=0.7, beta2=-0.8, beta1=0.2, mean_day=60, pup_dur=32, corf2=-1.2,alpha.molt=0.005, alpha.smr=0.004, beta_fem=0.15))   # green)
+    n.burn <- 10
+    n.updates <- 100
+    n.thin <- 2
+    
+  # Settings below should probably last about 10 x 5 = 2-3 hours
+    #n.burn <- 100
+    #n.updates <- 1000
+    #n.thin <- 10
+    
+    
+  # initialization for pup-only model
+    inits.list.puponly <- function(){
+         list(phi_a=0.6, phi_p=0.8, ad_ini=6, alpha.pup=0.010, fec_a=0.6, beta2=-1.3, beta1=0.3, mean_day=70, pup_dur=35, corf2=-1.1,alpha.molt=0.002, alpha.smr=0.002, beta_fem=0.20)  # blue
+           }
      
-     # parameters to monitor
-       monitor.puponly         <- c("ad_ini","alpha.pup","alpha.molt","alpha.smr","beta1","beta2","mean_day","pup_dur","surv.ad","fec.ad","surv.pup","corf.cut","frac.fem.cut","beta_fem")
+  # parameters to monitor
+    monitor.puponly         <- c("ad_ini","alpha.pup","alpha.molt","alpha.smr","beta1","beta2","mean_day","pup_dur","surv.ad","fec.ad","surv.pup","corf.cut","frac.fem.cut","beta_fem")
     
    
   # R2WinBUGS call; calling OpenBUGS requires BRugs package
@@ -184,7 +189,7 @@
   
   # Save results
     #save(post,n.thin,n.burn,n.updates,n.chains,out,file="results/Winbugs_model_results_2014_05_24.robj")   
-    save.image("results/Winbugs_model_results_with_data_2020_11_03.rdata")          
+    save.image("models/Netherlands/results/Winbugs_model_results_with_data_2020_11_03.rdata")          
 
 
 ################################################################################
@@ -196,10 +201,10 @@
 #! LOAD DATA AND LIBRARIES
    
    # Set working directory
-     setwd("C:/github/wk_WKSEALS-2020/data/Netherlands/")
+     setwd("C:/github/wk_WKSEALS-2020/")
     
    # Load data
-     load("results/Winbugs_model_results_with_data_2020_11_03.rdata")        
+     load("models/Netherlands/results/Winbugs_model_results_with_data_2020_11_03.rdata")        
    
    # Load libraries
      library(coda)
@@ -359,10 +364,11 @@
    
 # Define function to calculate population matrix     
 
-  # Define uk pups
-    uky<-data.list$pup.uk
-    uky<-c(uky,uky[length(uky)])
-
+  # Define values
+    pup.uk<-data.list$pup.uk
+    tot.uk<-data.list$tot.uk
+    pup.nl<-data.list$pup
+      
   # Define maximum number of years
     tmax=27      # was 26 + 1 year for plotting
    
@@ -489,7 +495,7 @@
          all.pop.table$mean[all.pop.table$name=="UKimport"]/all.pop.table$mean[all.pop.table$name=="year1"]
 
        # Write table
-         write.csv(all.pop.table,"results/population_variables_2014_06_05.csv")
+         #write.csv(all.pop.table,"models/Netherlands/results/population_variables_2020_11_03.csv")
 
 
 ################################################################################                    
