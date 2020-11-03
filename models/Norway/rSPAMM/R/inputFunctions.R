@@ -20,17 +20,17 @@ load.data <- function(population = "harpeast",Amax = 20,years_of_prediction = 15
   # Read in data ---------------
 
   # Catch data
-  catch_data <- read.table(paste("Data/",population,"/catch_data.dat",sep = ""),header = FALSE)
+  catch_data <- read.table(paste(population,"/catch_data.dat",sep = ""),header = FALSE)
   # Pup production estimates
-  pup_production <- read.table(paste("Data/",population,"/pup_production.dat",sep = ""),header = FALSE)
+  pup_production <- read.table(paste(population,"/pup_production.dat",sep = ""),header = FALSE)
   # Available fecundity data
-  fecundity <- read.table(paste("Data/",population,"/fecundity.dat",sep = ""),header = FALSE)
+  fecundity <- read.table(paste(population,"/fecundity.dat",sep = ""),header = FALSE)
   # Birth ogives for different periods
-  Pdat <- read.table(paste("Data/",population,"/wgharp.ogi",sep = ""),sep = "",header = TRUE)
+  Pdat <- read.table(paste(population,"/wgharp.ogi",sep = ""),sep = "",header = TRUE)
   # Which periods the various birth ogives applies to
-  Pper <- read.table(paste("Data/",population,"/wgharp.ogp",sep = ""),header = TRUE)
+  Pper <- read.table(paste(population,"/wgharp.ogp",sep = ""),header = TRUE)
   #Priors used
-  priors <- read.table(paste("Data/",population,"/priors.dat",sep = ""),header = FALSE)					#Priors used
+  priors <- read.table(paste(population,"/priors.dat",sep = ""),header = FALSE)					#Priors used
 
   years <- c(catch_data[1,1],catch_data[dim(catch_data)[1],1])
   #MAYBE ADD STEPWISE CHANGES IN FECUNDITY AND BIRTH OGIVES INSTEAD OF LINEAR TRANSITION
@@ -244,7 +244,7 @@ load.initial.values <- function(population = "harpeast",fromFile = TRUE,Kinit = 
 {
 
   if(fromFile == TRUE){
-    initial_values <- read.table(paste("Data/",population,"/initial_values.dat",sep = ""),header = FALSE)
+    initial_values <- read.table(paste(population,"/initial_values.dat",sep = ""),header = FALSE)
 
     #Initial values
     Kinit = initial_values[1,]								#Initial population size

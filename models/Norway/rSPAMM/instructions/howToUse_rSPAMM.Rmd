@@ -78,14 +78,11 @@ In order to load the data you have to specify which population you want to load 
 
 To load the data used you run the following function:
 ```{r eval=FALSE}
-dataPath1 = "../../../../data/Norway/"
-dataPath2 = "../../../../../data/Norway/"
+dataPath = "../../../data/Norway/"
 population = "harpeast"
-dataFiles = paste0(dataPath1,population)
+dataFiles = paste0(dataPath,population)
 data <- load.data(population = dataFiles)
 ```
-**If dataPath1 does not work, try changing to dataPath2. Most importantly, you just want to specify the path to reflect where your data is stored**.
-
 ```{r echo=FALSE}
 data = harpeast$data
 parameters = harpeast$parameters
@@ -109,7 +106,10 @@ As briefly mentioned earlier the population dynamics model is described by three
 
 To load the initial values of the parameters to be estimated run:
 ```{r eval=FALSE}
-parameters <- load.initial.values(population = "harpeast")
+dataPath = "../../../data/Norway/"
+population = "harpeast"
+dataFiles = paste0(dataPath,population)
+parameters <- load.initial.values(population = dataFiles)
 ```
 The parameters object is also a list and the content looks like this for the `harpeast` population
 ```{r}

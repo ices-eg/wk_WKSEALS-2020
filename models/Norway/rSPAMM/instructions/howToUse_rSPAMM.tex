@@ -223,17 +223,12 @@ To load the data used you run the following function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{dataPath1 =}\StringTok{ "../../../../data/Norway/"}
-\NormalTok{dataPath2 =}\StringTok{ "../../../../../data/Norway/"}
+\NormalTok{dataPath =}\StringTok{ "../../../data/Norway/"}
 \NormalTok{population =}\StringTok{ "harpeast"}
-\NormalTok{dataFiles =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(dataPath1,population)}
+\NormalTok{dataFiles =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(dataPath,population)}
 \NormalTok{data <-}\StringTok{ }\KeywordTok{load.data}\NormalTok{(}\DataTypeTok{population =}\NormalTok{ dataFiles)}
 \end{Highlighting}
 \end{Shaded}
-
-\textbf{If dataPath1 does not work, try changing to dataPath2. Most
-importantly, you just want to specify the path to reflect where your
-data is stored}.
 
 To explore the data object you can
 
@@ -290,7 +285,10 @@ To load the initial values of the parameters to be estimated run:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{parameters <-}\StringTok{ }\KeywordTok{load.initial.values}\NormalTok{(}\DataTypeTok{population =} \StringTok{"harpeast"}\NormalTok{)}
+\NormalTok{dataPath =}\StringTok{ "../../../data/Norway/"}
+\NormalTok{population =}\StringTok{ "harpeast"}
+\NormalTok{dataFiles =}\StringTok{ }\KeywordTok{paste0}\NormalTok{(dataPath,population)}
+\NormalTok{parameters <-}\StringTok{ }\KeywordTok{load.initial.values}\NormalTok{(}\DataTypeTok{population =}\NormalTok{ dataFiles)}
 \end{Highlighting}
 \end{Shaded}
 
