@@ -198,9 +198,9 @@
     post <- data.frame(matrix(out$sims.array,ncol=dim(out$sims.array)[3],dimnames=list(NULL,names(out$sims.list))))
   
   # Save results
-    #save(post,n.thin,n.burn,n.updates,n.chains,out,file="results/Winbugs_model_results_2014_05_24.robj")   
     save.image("models/Netherlands/results/Winbugs_model_results_with_data_2020_11_03.rdata")          
-
+    #save.image("models/Netherlands/results/Winbugs_full_model_results_with_data_2020_11_03.rdata")          
+    
 
 ################################################################################
 
