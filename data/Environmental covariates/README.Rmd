@@ -1,0 +1,62 @@
+---
+title: "Environmental covariate datasets"
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Background
+
+This folder contains candidate environmental covariates that could be included in the population models.
+
+The global climate indices included are:
+
+* North Atlantic Oscillation<sup>1</sup>
+* Atlantic Multidecadal Oscillation<sup>2</sup>
+* Subpolar Gyre Index<sup>3</sup>
+
+1. https://www.ncdc.noaa.gov/teleconnections/nao/
+2. https://psl.noaa.gov/data/timeseries/AMO/
+3. Generated from the second EOF of ssh produced by the ECMWF ORAS5 global reanalysis hindcast simulation  
+https://icdc.cen.uni-hamburg.de/en/daten/reanalysis-ocean/easy-init-ocean/ecmwf-oras5.html  
+Zuo, H., Balmaseda, M. A., Tietsche, S., Mogensen, K., and Mayer, M.: The ECMWF operational ensemble reanalysis–analysis system for ocean and sea ice: a description of the system and assessment, Ocean Sci., 15, 779–808, https://doi.org/10.5194/os-15-779-2019, 2019.
+
+
+### Reading in the data
+
+You can load the files as follows:
+
+```{r example, warning = F, message = F}
+require(tidyverse)
+require(lubridate)
+
+NAO <- read_csv("NAO.csv")
+NAO <- NAO %>% mutate(DATE = make_date(YEAR, MONTH))
+
+AMO <- read_csv("AMO.csv")
+AMO <- AMO %>% mutate(DATE = make_date(YEAR, MONTH))
+
+SGI <- read_csv("SGI.csv")
+
+```
+
+## Plotting the data
+
+You can also embed plots, for example:
+
+```{r plots, warning = F, message = F}
+require(patchwork)
+
+p1 <- ggplot() + geom_point(aes(x = DATE, y = VALUE), data = NAO) + ylab("NAO")
+p2 <- ggplot() + geom_point(aes(x = DATE, y = VALUE), data = AMO) + ylab("AMO")
+p3 <- ggplot() + geom_point(aes(x = YEAR, y = VALUE), data = SGI) + ylab("SGI")
+
+p1 / p2 / p3
+```
+
