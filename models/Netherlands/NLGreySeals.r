@@ -214,7 +214,7 @@
      setwd("C:/github/wk_WKSEALS-2020/")
     
    # Load data
-     load("models/Netherlands/results/Winbugs_model_results_with_data_2020_11_03.rdata")        
+     load("models/Netherlands/results/Winbugs_full_model_results_with_data_2020_11_03.rdata")        
    
    # Load libraries
      library(coda)
