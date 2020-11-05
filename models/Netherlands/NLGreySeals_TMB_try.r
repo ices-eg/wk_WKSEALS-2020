@@ -149,6 +149,47 @@ Type objective_function<Type>::operator() ()
    
    
    
+   
+   
+   
+   
+   //--------------------------------
+ // Likelihood contribution
+ Type nll = Type(0.0);
+
+ //Data contribution to likelihood
+
+ // Likelihood contribution from pup production estimates
+ for(int i=0;i< Np;i++)
+ {
+   nll += -dnorm(N0(CppAD::Integer(pupProductionData(i,0)-Cdata(0,0)+1)),pupProductionData(i,1),pupProductionData(i,1)*pupProductionData(i,2),true);
+ }
+
+ // Likelihood contribution from prior distibutions - EQ 11
+ for(int i=0;i< Npriors;i++)
+ {
+   nll += -dnorm(b(i),priors(i,0),priors(i,1),true);
+ }
+
+ // Likelihood penalty to avoid negative N
+ for(int i=0;i< Nc;i++)
+   nll += .001*(fabs(N1(i)-10000)-(N1(i)-10000))*(fabs(N1(i)-10000)-(N1(i)-10000));
+
+
+ /*
+ // Likelihood contribution from fecundity estimates - EQ 10
+ for(int i=0;i<Nf;i++)
+ {
+   nll += -dnorm(Ft(CppAD::Integer(Fecundity(i,0)-Cdata(0,0)+1)),Fecundity(i,1),Fecundity(i,2),true);
+ }
+ */
+ 
+ 
+ 
+ 
+ 
+ 
+   
      
  Type Nsum = 0;
  for(int i = 0;i<Amax;i++)
