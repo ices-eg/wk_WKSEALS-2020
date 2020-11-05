@@ -120,26 +120,35 @@ Type objective_function<Type>::operator() ()
     
   //---------------------------------
   // Calculate population trajectory
- for(int i=1;i<tmax;i++)
- {
-   
-   
-   N(i,0) = (N0(i-1)-Catch(i-1,1))*em0;			// 0-group from last year
-
-   for(int j=1;j<Amax;j++)
-   {
-     N(i,j) = N(i-1,j-1)*(Type(1)-Catch(i-1,2)/N1(i-1))*em;	// Pro-rata distribution of catches
+  for(int i=1;i<tmax;i++)
+  {
+    Nat(0,i) = fec.ad * frac.fem.cut * (Nat(7,i-1)  // I assume 0=age1
+    Nat(1,i) = alpha.pup * pup.uk(t) + surv.pup * Nat(0,i-1)
+    
+    for(int j=2;j<5;j++) //j=2=age3
+    {
+      N(j,i) = surv.ad * Nat(j,i-1)
+    }
+  
+    Nat(6,i) = surv.ad * (Nat(5,i-1) + Nat(6,i-1))
    }
-
-           for (t in 2:tmax){
-             Nat[1,t] <- fec.ad * frac.fem.cut * (Nat[7,t])
-             Nat[2,t] <- alpha.pup * pup.uk[t] + surv.pup * Nat[1,t-1]
-             Nat[3,t] <- surv.ad * Nat[2,t-1]
-             Nat[4,t] <- surv.ad * Nat[3,t-1]
-             Nat[5,t] <- surv.ad * Nat[4,t-1]
-             Nat[6,t] <- surv.ad * Nat[5,t-1]
-             Nat[7,t] <- surv.ad * (Nat[6,t-1] + Nat[7,t-1])
-             }
+    
+  // Calculate pup probabilities
+     for(int i=1;i<Kpup;i++)
+             bp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr.pup(i))
+             lp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr.pup(i)-beta1*pup_dur)
+             pup_prop(i) = bp(i)-lp(i)
+           }
+   
+   // Calculate expected pup counts
+      for(int i=1;i<Kpup;i++)
+        N_est1(i) <- 0.001+ Nat(0,yr.pup(i))*pup_prop(i)
+             
+             
+   //-------------- DONE UP TO HERE 
+   
+   
+   
      
  Type Nsum = 0;
  for(int i = 0;i<Amax;i++)
@@ -502,7 +511,7 @@ model {
              Nat.cut[5,t] <- surv.ad.cut * Nat.cut[4,t-1]
              Nat.cut[6,t] <- surv.ad.cut * Nat.cut[5,t-1]
              Nat.cut[7,t] <- surv.ad.cut * (Nat.cut[6,t-1] + Nat.cut[7,t-1])
-             }       
+            }       
         
         # Molt-summer model
            for (k in 1:K.molt){
