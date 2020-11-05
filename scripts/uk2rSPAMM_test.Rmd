@@ -1,0 +1,173 @@
+---
+title: "Running rSPAMM on UK pup production data"
+author: "Martin Biuw"
+date: "04/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F)
+library(rSPAMM)
+```
+
+## R Markdown
+
+This document describes a first naive attempt to prepare the UK pup production data to be run within the rSPAMM package. 
+It runs, but is naive and with lots of 'dummy' data.
+
+
+
+We start by reading the UK pup production dataset:
+
+```{r readData}
+uk <- read.table('../data/UK/PupData_1984_2018.txt', header=T)
+uk$North.Sea[which(uk$North.Sea==-1)] <- NA
+uk$Inner.Hebrides[which(uk$Inner.Hebrides==-1)] <- NA
+uk$Outer.Hebrides[which(uk$Outer.Hebrides==-1)] <- NA
+uk$Orkney[which(uk$Orkney==-1)] <- NA
+str(uk)
+```
+
+
+Then we set up and gradually populate a data list in the format that rSPAMM expects:
+
+```{r listSetup}
+uk.dat <- list()
+```
+
+Set max female age for population matrix:
+```{r maxAge}
+uk.dat$Amax <- 20
+```
+
+Create dummy catch data, assuming zero catches:
+```{r catchData}
+uk.dat$Cdata <- min(uk$Year, na.rm=T):max(uk$Year, na.rm=T)
+uk.dat$Cdata <- cbind(V1=uk.dat$Cdata, 
+                      V2=rep(0, length(uk.dat$Cdata)), 
+                      V3=rep(0, length(uk.dat$Cdata)))
+uk.dat$Nc <- nrow(uk.dat$Cdata)
+```
+
+
+Then import pup production data. Use mean CV from Barents Sea / White Sea harp seal pup counts (0.16). Either use the sum of pup counts within all regions:
+
+```{r allPupCounts}
+uk.dat$pupProductionData <- cbind(uk$Year, apply(uk[,-1], 1, sum), rep(0.16, nrow(uk)))
+```
+
+Or same for only a single region (e.g. Outer Hebrides):
+
+```{r OHcounts}
+uk.dat$pupProductionData <- cbind(uk$Year, 
+                                   uk$Outer.Hebrides, 
+                                   rep(0.16, nrow(uk)))
+```
+
+Get rid of years with no counts, and provide integer indicating number of years with valid counts:
+```{r rmNA}
+uk.dat$pupProductionData <- uk.dat$pupProductionData[which(!is.na(uk.dat$pupProductionData[,2])),]
+uk.dat$Np <- nrow(uk.dat$pupProductionData)
+```
+
+Next, set up vector of (for now) continuous and fixed fecundities. Initial test is done using posterior "mean" fecundity from Thomas et al. (2018). For NE Atlantic harps & hoods, this vector is normally built based on the fecundity estimated from ovaries sampled in a few different years. Here we create it based on the estimated fecundity from Thomas et al. (2018): 
+
+```{r Ftmp}
+uk.dat$Ftmp <- rep(0.9, nrow(uk.dat$Cdata))
+```
+
+
+rSPAMM also expects maturity ogives, so we set up a 'dummy ogive matrix here that is not ultimately used in this example. This dummy is based on mean ogives from Barents Sea / White Sea dataset:
+
+```{r ogive}
+uk.dat$Pmat <- matrix(c(0.0000, 0.0017, 0.0072, 0.0774, 0.3197, 0.5832, 0.7555, 
+0.8809, 0.9409, 0.9672, 0.9815, 0.9885, 0.9937, 0.9965, 0.9982, 1.0000, 1.0000, 
+1.0000, 1.0000, 1.0000), nrow=1)
+
+for(i in 2:nrow(uk.dat$Cdata)) uk.dat$Pmat <- rbind(uk.dat$Pmat, uk.dat$Pmat[1,])
+```
+
+rSPAMM was designed to provide projections of estimated population sizes into the future. The number of years to project is specified in the Npred component of the list. Here we are not interested in projections:
+
+```{r Npred}
+uk.dat$Npred=0
+```
+
+rSPAMM also allows priors on the three parameters that are estimated by the model: $K_{init}$, $M_{1+}$ and $M_0$. These priors can be either informative or not, and variances can also be set as desired. For this test, the parameters are set based on the first pup production estimate, with a multiplier (in this case 4):
+
+```{r priors}
+uk.dat$priors <- cbind(V1=c(uk.dat$pupProductionData[1,2]*4,
+                                    0.05, 0.52),
+                                  V2=c(0.2*uk.dat$pupProductionData[1,2]*4,
+                                    0.05, 0.05))
+uk.dat$Npriors <- as.integer(3)
+```
+
+
+<!-- ## Or wild priors: -->
+<!-- # uk.dat$priors <- cbind(V1=c(300000, -->
+<!-- #                             0.2, 0.3), -->
+<!-- #                        V2=c(0.2*300000, -->
+<!-- #                             0.5, 0.5)) -->
+
+
+Next, set up desired catch quotas. THis is only relevant for projections, but must be included in the list. Here they are all set to zero:
+
+```{r Quota}
+uk.dat$CQuota <- rep(0, 2)
+```
+
+Set up fecundity matrix with fecundities estimated from ovaries. This is again just a dummy in this case. We also need to set up a matrix of start and end years for periods within which fecundity was actually estimated. In this case it is set to span the entire time series: 
+
+```{r fecMat}
+uk.dat$fecundity <- data.frame(V1=uk.dat$Cdata[,1],
+                               V2=uk.dat$Ftmp,
+                               V3=rep(0.06, nrow(uk.dat$Cdata)))
+uk.dat$Pper <- data.frame(Pstart=min(uk.dat$Cdata[,1]), Pstop=max(uk.dat$Cdata[,1]))
+```
+
+This results in the complete list of data needed to run a model in rSPAMM:
+
+```{r showList}
+names(uk.dat)
+
+str(uk.dat)
+```
+
+We also need some initial parameter values. These were taken from the mean priors as a first try:
+
+```{r initVals}
+uk.par <- list(logK=log(as.numeric(uk.dat$priors[1,1])),
+               Mtilde=logit(as.numeric(uk.dat$priors[2,1])),
+               M0tilde=logit(as.numeric(uk.dat$priors[3,1])))
+uk.par
+```
+
+Then, try fitting the model:
+
+```{r runModel}
+ukobj <- run.model(data = uk.dat, par = uk.par)
+
+res <- model.results(data = uk.dat,optobject = ukobj)
+
+partab <- par.table(results=res, dat=uk.dat)
+
+```
+
+The model outputs can be explored in the same way as was described for the harp/hood outputs:
+
+```{r, parTab}
+partab
+plotRes(res, uk.dat, plotNlims=F, plotProjections = F)
+```
+
+And to stess again: This is a very naive model with lots of dummy data, but at least it runs and can be used to suggest changes that would make it more flexible and appropriate for different datasets. For instance, including density dependence would clearly make a big difference for this particular dataset:
+
+```{r plotPups}
+plotRes(res, uk.dat, plotNlims=F, plotProjections = F,
+        component='N0')
+```
+
+
+
+
