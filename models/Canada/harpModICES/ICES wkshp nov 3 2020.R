@@ -3,15 +3,12 @@ rm(list = ls())         #Delete all the current files in the workspace
 ##################################################################
 #### Define the directory where the files are read and written ###
 ##################################################################
-rep <- "C:/Users/Mike Hammill/Documents/Datas_seals/Harp/Populations/ICES 2020"    
 
-#rep <- "C:/Users/hammillm/Documents/Datas_seals/Harp/Populations/2019 assessment/Modeling/Projection modeling"      
-#rep <- "N:/Arno/ForMike/Harp_seals/Model2015_IntegratedModif"
-        
-#load("pg30sept2015.Rdata")         #this statement loads a saved workspace    #there is a bug with the tkprogress button when RData is reloaded. the best thing is to rerun the whole program,                                       #with only 200 iterations, then load .Rdata. the 2nd part of the program works well with RData after this
+root <- "../wk_WKSEALS-2020/" # define the location of the folder with the wk-WKSEALS-2020 GitHub files
 
-setwd(rep)  #set the working directory
-outdir<-paste(rep, "/modelAMKcor_output/", sep="") # set name of the output folder
+rep <- paste0(root, "\\models\\Canada\\harpModICES")
+datDir <- paste0(root, "\\data\\Canada\\harpModICES\\")        
+outdir<-paste(rep, "\\modelAMKcor_output\\", sep="") # set name of the output folder
 if (!file.exists(substring(outdir,1, nchar(outdir)-1))) {dir.create(outdir)}  #create directory if it does not exist
 
 
@@ -23,6 +20,8 @@ if (!file.exists(substring(outdir,1, nchar(outdir)-1))) {dir.create(outdir)}  #c
 
 start.time1 <- Sys.time()
 start.time1
+
+setwd(datDir)
 
 ### 1. SMOOTHED REPRODUCTIVE RATES
   # Load data
@@ -213,7 +212,7 @@ start.time1
    # food factor (1952-2005)
 #  sealmod.params$FF <- as.matrix(read.table("FallCapelin.csv", sep = ";", header = TRUE))
 
-  sealmod.params$FF <- as.matrix(read.table("NewCEIndex.csv", sep = ";", header = TRUE))
+  sealmod.params$FF <- as.matrix(read.table("CEIndex.csv", sep = ";", header = TRUE))
   
 #  sealmod.params$FF <- as.matrix(read.table("CElindex.csv", sep = ";", header = TRUE))
 
