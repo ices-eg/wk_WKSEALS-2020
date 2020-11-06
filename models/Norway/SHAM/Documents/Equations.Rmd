@@ -1,0 +1,40 @@
+---
+title: "Harp Seal Populations"
+author: "Sophie Smout"
+date: "18/09/2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+For the fecundity of the seals, let's sort out some definitions. 
+
+'pregnancy rate' means the proportion of seals found to be pregnant that year when they are lethally sampled, based usually on ovaries from moulting animals. Symbol $\phi$ (this is a proportion or probability so no units)
+
+'natality' means the probability of producing a live pup. Symbol $\nu$ (this is a proportion or probability so no units) 
+
+The number of females pregnant in year $t$ given there are $n_t$ females in the population could look like this
+
+
+$$n_{pregnant,t,age}\sim Binomial(n_t,\phi_{t,age})$$
+$$n_{pregnant,t}=\sum_{ages} {n_{pregnant,t,age}}$$
+Where the pregnancy rate is a response to environmental variables which I represent as a vector of different ones $\vec{x}$ e.g. capelin, SST etc. Parameters in this function are in vector $\vec{\theta}$
+
+$$\phi_{t,age} = f(\vec{\theta},\vec{x}) ogive(age)$$
+A very common type of formulation is to make $f(\vec{\theta},\vec{x})$ into a logistic equation which might go like this
+
+$$f(\vec{\theta},\vec{x})=\frac{exp(\beta_0+\beta_{capelin}CapelinBiomass+\beta_{cod}CodBiomass)}{1+exp(\beta_0+\beta_{capelin}CapelinBiomass+\beta_{cod}CodBiomass))}$$
+
+
+
+Note that I've also included a multiplier on the logistic function $ogive(age)$ to take account that fecundity changes with age. 
+
+This approach could be used to estimate $\vec{\theta}$ i.e. the $\beta$ values, based on observations of $\phi_t$ , capelin and cod. 
+
+Then some of those females go on to actually pup. The proportion that do is $Q$ and we could allow this to vary by year as well, but let's not for now!
+
+$$n_{pups}\sim Binomial(n_{pregnant,t},Q)$$
+
+This can all be embedded in the seal population model which updates the female population at every time step
+

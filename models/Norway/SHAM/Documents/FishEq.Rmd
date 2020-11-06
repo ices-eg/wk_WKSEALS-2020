@@ -1,0 +1,105 @@
+---
+title: "Suggested approach for including prey availability and competition in population model"
+author: "Martin Biuw, Tor Arne Øigård, Sophie Smout and Tore Haug"
+date: "Draft: `r format(Sys.time(), '%Y-%m-%d')`"
+output: 
+  bookdown::pdf_document2:
+    toc: no
+
+always_allow_html: yes
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval=T)
+```
+
+## FROM INPUT DATA TO SUITABILITY INDEX
+
+Data on total biomass ($TB$) are taken from ICES stock assessments: *http://standardgraphs.ices.dk/stockList.aspx*. Specifically, I use capelin total biomass in the Barents Sea/Norwegian Sea as an index of prey availability, and total biomass of East Arctic cod as an index of competition. For now, only mean estimates are considered. However, the data also includes 95% confidence intervals for all annual biomass estimates, and these should probably be included in a final model. While cod data go back to 1946, capelin data are (so far) only available from 1972 onwards. However, an estimate of capelin biomass, reconstructed based on stomach contents of cod (Marshall et al. 2000), is available for the period 1946-1972. These data (except the 1972 data), have also been included, but have to be treated differently in the model (by allowing a different error distribution). 
+
+```{r,eval=TRUE}
+source('R/read.ICES.R')
+cap <- read.ICES()
+```
+
+
+```{r plotFish, warning=F, message=F, dpi=300, fig.width=5, fig.height=3.5, fig.pos='H', fig.align='center'}
+histCap <- read.csv('Data/histCap.csv')
+histCap$method <- rep('Rec', nrow(histCap))
+cap$Data <- plyr::rbind.fill(histCap[-nrow(histCap),], cap$Data)
+cap$Data$method[which(is.na(cap$Data$method))] <- 'Meas'
+cap$Data$method <- as.factor(cap$Data$method)
+
+cod <- read.ICES('Data/_9841_9841.xml')
+
+fish <- cod$Data[,c(1,6,9)]
+names(fish)[c(2,3)] <- c('CodTB', 'CodSSB')
+fish <- merge(fish, cap$Data[,c(1:4)], by='Year', all.x=T, all.y=F)
+names(fish)[c(4,6)] <- c('CapTB', 'CapSSB')
+fish <- fish[which(!is.na(fish$CodTB) & !is.na(fish$CapTB)),]
+fish$suit <- (fish$CapTB/max(fish$CapTB, na.rm=T))-(fish$CodTB/max(fish$CodTB, na.rm=T))
+fish$suit <- fish$suit-min(fish$suit)
+fish$suit <- fish$suit/max(fish$suit)
+
+
+par(mfrow=c(2,1), mar=c(1,4,1,4), oma=c(4,1,1,1))
+plot(CodTB~Year, data=fish, type='l', col=3, xlab='', ylab='Tonnes x 1000',
+     ylim=c(min(as.numeric(apply(fish, 2, min, na.rm=T)[c(2,4)])),
+            max(as.numeric(apply(fish, 2, max, na.rm=T)[c(2,4)]))),
+     axes=F)
+axis(1, labels=F)
+axis(2, at=pretty(par('usr')[c(3,4)]), labels=format(pretty(par('usr')[c(3,4)])/1000, big.mark=' ', scientific=F, digits=0))
+abline(v=par('usr')[1])
+abline(h=par('usr')[3])
+
+lines(CapTB~Year, data=fish, col='grey', lty=2)
+lines(CapTB~Year, data=fish[which(fish$method=='Meas'),])
+
+legend(par('usr')[2], par('usr')[4], lty=1, col=c(3,1), c('Cod', 'Capelin'), title = 'Total biomass', bty='n', cex=0.7, xpd=NA)
+
+plot(suit~Year, data=fish, type='l', lty=2, col='grey', xlab='', ylab='Suitability', axes=F, ylim=c(0,1))
+lines(suit~Year, data=fish[which(fish$method=='Meas'),])
+axis(1)
+axis(2)
+abline(v=par('usr')[1])
+abline(h=par('usr')[3])
+
+```
+
+For now, I calculate a "habitat suitability" index from time series of capelin and cod biomass. Ideally, each species should e included by itself, and separate functional responses could be specified for each. For now, here are the steps I use:
+\newline 
+\newline 
+
+$$S=\frac{TB_{capelin}}{max(TB_{capelin})}-\frac{TB_{cod}}{max(TB_{cod})}\quad\quad\quad{Eq. 1}$$
+\newline 
+\newline 
+This index was then standardised so that $0 \le S \le 1$: 
+\newline 
+\newline 
+
+$$S=\frac{S-min(S)}{max(S-min(S))}\quad\quad\quad{Eq. 2}$$
+
+
+## INCLUDE IN THE MODEL
+
+To test the effect of this habitat suitability index on model fit, I've included the suitability effect as an additive effect $x$ on fecundity $F$:
+
+$$Ft_{y}=F_y+x_y\quad\quad\quad{Eq. 3}$$
+
+This additive effect is assumed to follow a bounded logistic function:
+
+$$x_y=\frac{2}{(1+e^{-(S_{y-1}-m)/s))})-1}\quad\quad\quad{Eq. 4}$$
+where $m$ and $s$ are location and scale parameters. This function creates a bounded response, $-1 \le x \le 1$. Perhaps this needs to be modified (or a multiplier $\theta$ added in Eq. 3):
+
+$$Ft_{y}=F_y+\theta(x_y)\quad\quad\quad{Eq. 5}$$
+
+## ACCOUNTING FOR POTENTIAL BIAS IN OBSERVED FECUNDITY
+We are suspicious of some of the observed fecundity rates observed in histological samples. It may be that the adult females examined are not a representative sample of the adult females in the population. To introduce the ability of accounting for potential added noise in these observations, it may be possible to modify the function that estimates the contribution of observations. Currently, observation error is assumed to follow a Gaussian distribution. This could instead be modelled as a mixture of a Gaussian and a $t$ distribution (not sure exactly how to write this):
+
+$$(1-p)\mathcal{N}(F|Ft,\sigma_{Ft})+pT(F|Ft)\quad\quad\quad{Eq. 6}$$
+where $\mathcal{N}$ represents the Gaussian distribution with estimated mean $Ft$ and standard deviation $\sigma_{Ft}$, $T$ represents the t distribution, and $p$ is the mixture proportion.
+
+
+
+
