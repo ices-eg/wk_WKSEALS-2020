@@ -97,6 +97,7 @@ Type objective_function<Type>::operator() ()
       for(int i=0;i<K_pup;i++)
         N_est1(i) = 0.001 + Nat(0,yr_pup(i))*pup_prop(i);
              
+             
   
   // Calculate expected molt counts
         
@@ -105,6 +106,7 @@ Type objective_function<Type>::operator() ()
           for(int ii=1;ii<=6;ii++){
             tmp = tmp + Nat(ii,yr_molt(i));
           }
+          Nat.block(1,yr_molt(i),6,1).sum();  // The more compacte R-style code just to check that it compiles
         N27(i) = corf_sto * surv_pup * Nat(1,yr_molt(i)) + pow(surv_ad,106.0/365.0) * tmp + alpha_molt * tot_uk(yr_molt(i)+1);
       }
           
