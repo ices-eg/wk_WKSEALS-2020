@@ -48,8 +48,6 @@ Type objective_function<Type>::operator() ()
   PARAMETER(beta_fem);     //Fraction of females (fixed)
 
   //Transform estimated parameters
-  Type frac_fem_sto = (1+beta_fem)/(2+beta_fem); 
-  Type corf_sto = ilogit(corf2);
   Type alpha_pup_sto = ilogit(alpha_pup);
   Type alpha_smr_sto = ilogit(alpha_smr);
   Type alpha_molt_sto = ilogit(alpha_molt);
@@ -73,13 +71,13 @@ Type objective_function<Type>::operator() ()
   Nat(4,0) = 0;
   Nat(5,0) = 0;
   Nat(6,0) = ad_ini;
-  Nat(0,0) = fec_ad * Nat(6,0) * frac_fem_sto;
+  Nat(0,0) = fec_ad * Nat(6,0) * beta_fem;
     
   //---------------------------------
   // Calculate population trajectory
   for(int i=1;i<tmax;i++)
   {
-    Nat(0,i) = fec_ad * frac_fem_sto* Nat(6,i-1);  // I assume 0=age1
+    Nat(0,i) = fec_ad * beta_fem* Nat(6,i-1);  // I assume 0=age1
     Nat(1,i) = alpha_pup_sto * pup_uk(i-1) + surv_pup * Nat(0,i-1);
     
     for(int j=2;j<6;j++) //j=2=age3
@@ -108,7 +106,7 @@ Type objective_function<Type>::operator() ()
             tmp = tmp + Nat(ii,yr_molt(i));
           }
           //Nat.block(1,yr_molt(i),6,1).sum();  // The more compacte R-style code just to check that it compiles
-        N27(i) = corf_sto * surv_pup * Nat(0,yr_molt(i)) + pow(surv_ad,106.0/365.0) * tmp + alpha_molt_sto * tot_uk(yr_molt(i)+1);
+        N27(i) = corf2 * surv_pup * Nat(0,yr_molt(i)) + pow(surv_ad,106.0/365.0) * tmp + alpha_molt_sto * tot_uk(yr_molt(i)+1);
       }
           
   // Calculate expected summer counts
@@ -117,7 +115,7 @@ Type objective_function<Type>::operator() ()
         for(int ii=0;ii<=6;ii++){
           tmp = tmp + Nat(ii,yr_smr(i));
         }
-        N17(i) = corf_sto * surv_pup * Nat(0,yr_smr(i)) + pow(surv_ad,207.0/365.0) * tmp + alpha_smr_sto * tot_uk(yr_smr(i)+1);
+        N17(i) = corf2 * (surv_pup * Nat(0,yr_smr(i)) + pow(surv_ad,207.0/365.0) * tmp + alpha_smr_sto * tot_uk(yr_smr(i)+1)); // added ( after corf2)
       }
   
   

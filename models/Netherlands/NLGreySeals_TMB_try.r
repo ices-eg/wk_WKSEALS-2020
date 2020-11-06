@@ -67,23 +67,24 @@
                        K_molt=data.list$K.molt,
                        K_pup=data.list$K.pup)
       
-      parameters <- list(phi_a=0.6, 
-                         phi_p=0.8, 
+      parameters <- list(phi_a=logit(0.9), 
+                         phi_p=logit(0.8), 
                          ad_ini=6, 
-                         alpha_pup=0.010, 
+                         alpha_pup=logit(0.010), 
                          fec_a=0.6, 
                          beta1=0.3, 
                          beta2=-1.3, 
-                         mean_day=70, 
-                         pup_dur=35, 
-                         corf2=-1.1,
-                         alpha_molt=0.002, 
-                         alpha_smr=0.002, 
-                         beta_fem=0.20) 
+                         mean_day=65, 
+                         pup_dur=30, 
+                         corf2=0.25,
+                         alpha_molt=logit(0.002), 
+                         alpha_smr=logit(0.002), 
+                         beta_fem=0.53) 
        
       # Fit model  
       obj <- MakeADFun(the.data, parameters, 
                        map=list(corf2=factor(NA),beta_fem=factor(NA)), 
+                       #map=list(beta_fem=factor(NA)), 
                        DLL="TMB_NLGreySeals_Mod",
                        inner.control = list(maxit = 10000))
       obj$hessian <- TRUE
