@@ -53,9 +53,9 @@ Type objective_function<Type>::operator() ()
   Type alpha_pup_sto = ilogit(alpha_pup);
   Type alpha_smr_sto = ilogit(alpha_smr);
   Type alpha_molt_sto = ilogit(alpha_molt);
-  Type surv_ad = 0.8+0.2*phi_a;
-  Type fec_ad =  0.6+0.4*fec_a;
-  Type surv_pup = phi_p * surv_ad; 
+  Type surv_ad = 0.8+0.2*ilogit(phi_a);
+  Type fec_ad =  0.6+0.4*ilogit(fec_a);
+  Type surv_pup = ilogit(phi_p) * surv_ad; 
  
   // Create empty matrixes and vectors
   array<Type>   Nat(7,tmax);         // To have multiple populations you need 3 dimensions.
@@ -147,13 +147,13 @@ Type objective_function<Type>::operator() ()
      }
 
   // Likelihood contribution from informative prior distibutions - EQ 11
-     nll += -dbeta(phi_a,Type(1.6),Type(1.2),true);
-     nll += -dbeta(phi_p,Type(2.87),Type(1.78),true);
-     nll += -dbeta(fec_a,Type(2),Type(1.5),true);
+     nll += -dbeta(surv_ad,Type(1.6),Type(1.2),true); // was phi_a
+     nll += -dbeta(surv_pup,Type(2.87),Type(1.78),true); //phi_p
+     nll += -dbeta(fec_ad,Type(2),Type(1.5),true); //fec_a
      
   // The following priors are fixed; i.e. parameters should not be estimated by the model
-     nll += -dnorm(corf2,Type(-1.0935),Type(21.51307),true);
-     nll += -dbeta(beta_fem,Type(2),Type(8),true);
+     //nll += -dnorm(corf2,Type(-1.0935),Type(21.51307),true);
+     //nll += -dbeta(beta_fem,Type(2),Type(8),true);
          
   //----------------------------------------------------------------------------
   // Report section, define which quantities should have uncertainty estimates
