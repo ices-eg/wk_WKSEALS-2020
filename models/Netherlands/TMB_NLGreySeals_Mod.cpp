@@ -104,7 +104,7 @@ Type objective_function<Type>::operator() ()
           for(int ii=1;ii<=6;ii++){ //age 2 to 7
             tmp = tmp + Nat(ii,yr_molt(i));
           }
-          Nat.block(1,yr_molt(i),6,1).sum();  // The more compacte R-style code just to check that it compiles
+          //Nat.block(1,yr_molt(i),6,1).sum();  // The more compacte R-style code just to check that it compiles
         N27(i) = corf_sto * surv_pup * Nat(0,yr_molt(i)) + pow(surv_ad,106.0/365.0) * tmp + alpha_molt * tot_uk(yr_molt(i)+1);
       }
           
