@@ -82,7 +82,10 @@
                          beta_fem=0.20) 
        
       # Fit model  
-      obj <- MakeADFun(the.data, parameters, map=list(corf2=factor(NA),beta_fem=factor(NA)), DLL="TMB_NLGreySeals_Mod")
+      obj <- MakeADFun(the.data, parameters, 
+                       map=list(corf2=factor(NA),beta_fem=factor(NA)), 
+                       DLL="TMB_NLGreySeals_Mod",
+                       inner.control = list(maxit = 10000))
       obj$hessian <- TRUE
       opt <- do.call("optim", obj)
       opt$par
