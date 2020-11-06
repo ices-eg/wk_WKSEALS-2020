@@ -47,20 +47,20 @@ Type objective_function<Type>::operator() ()
   PARAMETER(beta_fem);     //Fraction of females (fixed)
 
   //Transform estimated parameters
-  Type frac_fem_sto = (1+beta_fem)/(2+beta_fem) // is this working?
-  Type corf_sto = ilogit(corf2)
-  Type surv_ad = 0.8+0.2*phi_a
-  Type fec_ad =  0.6+0.4*fec_a
-  Type surv_pup = phi_p * surv_ad // is this working? 
+  Type frac_fem_sto = (1+beta_fem)/(2+beta_fem); // is this working?
+  Type corf_sto = ilogit(corf2);
+  Type surv_ad = 0.8+0.2*phi_a;
+  Type fec_ad =  0.6+0.4*fec_a;
+  Type surv_pup = phi_p * surv_ad; // is this working? 
  
   // Create empty matrixes and vectors
-  array<Type>   Nat(7,tmax);        // Numbers at age (7,tmax) or (tmax,7)
-  vector<Type>  N_est1(K_pup);      // 0 year olds in line with observed pup counts
-  vector<Type>  bp(K_pup)           // birth arrival probability 
-  vector<Type>  lp(K_pup)           // birth departure probability curve
-  vector<Type>  pup_prop(K_pup)     // pup presence probability:  bp[j]-lp[j]
-  vector<Type>  N27(K_molt)         // Total number of 1-7 year olds, same length as moult counts 
-  vector<Type>  N17(K_smr)          // Total population size, same length as summer counts
+  array<Type>   Nat(7,tmax);         // Numbers at age (7,tmax) or (tmax,7)
+  vector<Type>  N_est1(K_pup);       // 0 year olds in line with observed pup counts
+  vector<Type>  bp(K_pup);           // birth arrival probability 
+  vector<Type>  lp(K_pup);           // birth departure probability curve
+  vector<Type>  pup_prop(K_pup);     // pup presence probability:  bp[j]-lp[j]
+  vector<Type>  N27(K_molt);         // Total number of 1-7 year olds, same length as moult counts 
+  vector<Type>  N17(K_smr);          // Total population size, same length as summer counts
   
   // Preliminary calculations for first year
   Nat(2,0) = alpha_pup * pup_uk[1];
@@ -68,42 +68,42 @@ Type objective_function<Type>::operator() ()
   Nat(4,0) = 0;
   Nat(5,0) = 0;
   Nat(6,0) = 0;
-  Nat(7,0) = ad_ini
-  Nat(1,0) = fec_ad * Nat(7,0) * frac_fem_sto
+  Nat(7,0) = ad_ini;
+  Nat(1,0) = fec_ad * Nat(7,0) * frac_fem_sto;
     
   //---------------------------------
   // Calculate population trajectory
   for(int i=1;i<tmax;i++)
   {
-    Nat(0,i) = fec_ad * frac_fem_sto* (Nat(7,i-1)  // I assume 0=age1
-    Nat(1,i) = alpha_pup * pup_uk(t) + surv_pup * Nat(0,i-1)
+    Nat(0,i) = fec_ad * frac_fem_sto* Nat(7,i-1);  // I assume 0=age1
+    Nat(1,i) = alpha_pup * pup_uk(i) + surv_pup * Nat(0,i-1);
     
     for(int j=2;j<5;j++) //j=2=age3
     {
-      N(j,i) = surv_ad * Nat(j,i-1)
+      Nat(j,i) = surv_ad * Nat(j,i-1);
     }
   
-    Nat(6,i) = surv_ad * (Nat(5,i-1) + Nat(6,i-1))
+    Nat(6,i) = surv_ad * (Nat(5,i-1) + Nat(6,i-1));
    }
     
   // Calculate pup probabilities
      for(int i=1;i<K_pup;i++)
-             bp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup(i))
-             lp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup(i)-beta1*pup_dur)
-             pup_prop(i) = bp(i)-lp(i)
+             bp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup(i));
+             lp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup(i)-beta1*pup_dur);
+             pup_prop(i) = bp(i)-lp(i);
            }
    
   // Calculate expected pup counts
       for(int i=1;i<K_pup;i++)
-        N_est1(i) <- 0.001+ Nat(0,yr_pup(i))*pup_prop(i)
+        N_est1(i) <- 0.001+ Nat(0,yr_pup(i))*pup_prop(i);
              
   // Calculate expected molt counts
       for(int i=1;i<K_molt;i++)
-        N27(i) <- corf_sto * surv_pup * Nat.cut(1,yr_molt(ik)) + pow(surv_ad,106/365) * sum(Nat(2:7,yr_molt(i))) + alpha_molt * tot.uk(yr_molt(i)+1)
+        N27(i) <- corf_sto * surv_pup * Nat.cut(1,yr_molt(ik)) + pow(surv_ad,106/365) * sum(Nat(2:7,yr_molt(i))) + alpha_molt * tot.uk(yr_molt(i)+1);
           
   // Calculate expected molt counts
       for(int i=1;i<K_smr;i++)
-        N17(i) <- corf_sto * surv_pup * Nat.cut(1,yr_smr(i)) + pow(surv_ad,207/365) * sum(Nat(2:7,yr_smr(i))) + alpha_smr * tot_uk(yr_molt(i)+1)
+        N17(i) <- corf_sto * surv_pup * Nat.cut(1,yr_smr(i)) + pow(surv_ad,207/365) * sum(Nat(2:7,yr_smr(i))) + alpha_smr * tot_uk(yr_molt(i)+1);
   
   
    
