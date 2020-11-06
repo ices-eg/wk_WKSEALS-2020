@@ -27,10 +27,10 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(yr_molt);   // Year of moult count
   DATA_VECTOR(smr);       // Observed summer counts
   DATA_IVECTOR(yr_smr);    // Year of summer count
-  DATA_INTEGER(tmax);     // Number of years, equal to length pup counts UK (include in code below?)
-  DATA_INTEGER(K_smr);    // Length of summer counts (include in code below?)
-  DATA_INTEGER(K_molt);   // Length of molt counts (include in code below?)
-  DATA_INTEGER(K_pup);    // Length of pup counts (include in code below?) 
+  DATA_INTEGER(tmax);     // Number of years, equal to length pup counts UK 
+  DATA_INTEGER(K_smr);    // Length of summer counts 
+  DATA_INTEGER(K_molt);   // Length of molt counts
+  DATA_INTEGER(K_pup);    // Length of pup counts 
 
   //Estimated parameters
   PARAMETER(phi_a);        //Adult survival
@@ -42,20 +42,20 @@ Type objective_function<Type>::operator() ()
   PARAMETER(beta2);        //Change (i.e. annual forward shift in mean birth day)
   PARAMETER(mean_day);     //Mean birth date
   PARAMETER(pup_dur);      //duration of pups on land
-  PARAMETER(corf2);        //Haulout probability (fixed, should not be estimated, how to?)
+  PARAMETER(corf2);        //Haulout probability (fixed!)
   PARAMETER(alpha_molt);   //Proportion of UK adults moving into NL during moult
   PARAMETER(alpha_smr);    //Proportion of UK adults moving into NL during summer
   PARAMETER(beta_fem);     //Fraction of females (fixed)
 
   //Transform estimated parameters
-  Type frac_fem_sto = (1+beta_fem)/(2+beta_fem); // is this working?
+  Type frac_fem_sto = (1+beta_fem)/(2+beta_fem); 
   Type corf_sto = ilogit(corf2);
   Type surv_ad = 0.8+0.2*phi_a;
   Type fec_ad =  0.6+0.4*fec_a;
-  Type surv_pup = phi_p * surv_ad; // is this working? 
+  Type surv_pup = phi_p * surv_ad; 
  
   // Create empty matrixes and vectors
-  array<Type>   Nat(7,tmax);         // Numbers at age (7,tmax) or (tmax,7)  // To have multiple populations you need 3 dimensions.
+  array<Type>   Nat(7,tmax);         // To have multiple populations you need 3 dimensions.
   vector<Type>  N_est1(K_pup);       // 0 year olds in line with observed pup counts
   vector<Type>  bp(K_pup);           // birth arrival probability 
   vector<Type>  lp(K_pup);           // birth departure probability curve
@@ -98,10 +98,7 @@ Type objective_function<Type>::operator() ()
       for(int i=0;i<K_pup;i++)
         N_est1(i) = 0.001 + Nat(0,yr_pup(i))*pup_prop(i);
              
-             
-  
-  // Calculate expected molt counts
-        
+  // Calculate expected molt counts      
         for(int i=0;i<K_molt;i++){
           Type tmp= Type(0.0);
           for(int ii=1;ii<=6;ii++){ //age 2 to 7
@@ -117,9 +114,7 @@ Type objective_function<Type>::operator() ()
         for(int ii=0;ii<=6;ii++){
           tmp = tmp + Nat(ii,yr_smr(i));
         }
-        
-          N17(i) = corf_sto * surv_pup * Nat(0,yr_smr(i)) + pow(surv_ad,207.0/365.0) * tmp + alpha_smr * tot_uk(yr_smr(i)+1);
-
+        N17(i) = corf_sto * surv_pup * Nat(0,yr_smr(i)) + pow(surv_ad,207.0/365.0) * tmp + alpha_smr * tot_uk(yr_smr(i)+1);
       }
   
   
