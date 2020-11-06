@@ -45,12 +45,50 @@
     setwd("C:/github/wk_WKSEALS-2020/models/Netherlands/")
     
   # Compile
-    compile("TMB_NLGreySeals.cpp")
+    compile("TMB_NLGreySeals_Mod.cpp")
       
-      # Load  
-      dyn.load(dynlib("linreg_IPP_multirandom_5"))
-      set.seed(123)
+  # Load  
+    dyn.load(dynlib("TMB_NLGreySeals_Mod"))
+    set.seed(123)
 
+  # Create data list    
+      the.data <- list(pup = data.list$pup,
+                       daynr=data.list$daynr,
+                       yr_pup=data.list$yr.pup-1,
+                       yr_pup_v=data.list$yr.pup,
+                       pup_uk=data.list$pup.uk,
+                       tot_uk=data.list$tot.uk,
+                       molt=data.list$molt,
+                       yr_molt=data.list$yr.molt-1,
+                       smr=data.list$smr,
+                       yr_smr=data.list$yr.smr-1,
+                       tmax=data.list$tmax,
+                       K_smr=data.list$K.smr,
+                       K_molt=data.list$K.molt,
+                       K_pup=data.list$K.pup)
+      
+      parameters <- list(phi_a=0.6, 
+                         phi_p=0.8, 
+                         ad_ini=6, 
+                         alpha_pup=0.010, 
+                         fec_a=0.6, 
+                         beta1=0.3, 
+                         beta2=-1.3, 
+                         mean_day=70, 
+                         pup_dur=35, 
+                         corf2=-1.1,
+                         alpha_molt=0.002, 
+                         alpha_smr=0.002, 
+                         beta_fem=0.20) 
+       
+      # Fit model  
+      obj <- MakeADFun(the.data, parameters, map=list(corf2=factor(NA),beta_fem=factor(NA)), DLL="TMB_NLGreySeals_Mod")
+      obj$hessian <- TRUE
+      opt <- do.call("optim", obj)
+      opt$par
+      bla2$fit$parfull
+      
+      
 #!  FIT PUP-ONLY MODEL
 
   # MCMC controls

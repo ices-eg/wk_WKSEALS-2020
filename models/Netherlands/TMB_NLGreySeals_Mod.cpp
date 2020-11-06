@@ -19,7 +19,8 @@ Type objective_function<Type>::operator() ()
   //Input data
   DATA_VECTOR(pup);       // Observed pup counts NL
   DATA_VECTOR(daynr);     // Day number of NL pup count
-  DATA_IVECTOR(yr_pup);    // Year of pup count
+  DATA_IVECTOR(yr_pup);    // Year of pup count as integer
+  DATA_VECTOR(yr_pup_v);    // Year of pup count as vector
   DATA_VECTOR(pup_uk);    // Model-estimates pup-counts UK
   DATA_VECTOR(tot_uk);    // Model-estimates total NS-UK population size
   DATA_VECTOR(molt);      // Observed moult counts UK
@@ -76,7 +77,7 @@ Type objective_function<Type>::operator() ()
   for(int i=1;i<tmax;i++)
   {
     Nat(0,i) = fec_ad * frac_fem_sto* Nat(6,i-1);  // I assume 0=age1
-    Nat(1,i) = alpha_pup * pup_uk(i) + surv_pup * Nat(0,i-1);
+    Nat(1,i) = alpha_pup * pup_uk(i-1) + surv_pup * Nat(0,i-1);
     
     for(int j=2;j<6;j++) //j=2=age3
     {
@@ -88,8 +89,8 @@ Type objective_function<Type>::operator() ()
     
   // Calculate pup probabilities
      for(int i=0;i<K_pup;i++){
-             bp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup(i));
-             lp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup(i)-beta1*pup_dur);
+             bp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup_v(i));
+             lp(i)= ilogit(-mean_day*beta1+beta1*daynr(i) -beta1*beta2*yr_pup_v(i)-beta1*pup_dur);
              pup_prop(i) = bp(i)-lp(i);
            }
    
@@ -103,21 +104,21 @@ Type objective_function<Type>::operator() ()
         
         for(int i=0;i<K_molt;i++){
           Type tmp= Type(0.0);
-          for(int ii=1;ii<=6;ii++){
+          for(int ii=1;ii<=6;ii++){ //age 2 to 7
             tmp = tmp + Nat(ii,yr_molt(i));
           }
           Nat.block(1,yr_molt(i),6,1).sum();  // The more compacte R-style code just to check that it compiles
-        N27(i) = corf_sto * surv_pup * Nat(1,yr_molt(i)) + pow(surv_ad,106.0/365.0) * tmp + alpha_molt * tot_uk(yr_molt(i)+1);
+        N27(i) = corf_sto * surv_pup * Nat(0,yr_molt(i)) + pow(surv_ad,106.0/365.0) * tmp + alpha_molt * tot_uk(yr_molt(i)+1);
       }
           
-  // Calculate expected molt counts
+  // Calculate expected summer counts
       for(int i=0;i<K_smr;i++){
         Type tmp= Type(0.0);
         for(int ii=0;ii<=6;ii++){
           tmp = tmp + Nat(ii,yr_smr(i));
         }
         
-          N17(i) = corf_sto * surv_pup * Nat(1,yr_smr(i)) + pow(surv_ad,207.0/365.0) * tmp + alpha_smr * tot_uk(yr_molt(i)+1);
+          N17(i) = corf_sto * surv_pup * Nat(0,yr_smr(i)) + pow(surv_ad,207.0/365.0) * tmp + alpha_smr * tot_uk(yr_smr(i)+1);
 
       }
   
