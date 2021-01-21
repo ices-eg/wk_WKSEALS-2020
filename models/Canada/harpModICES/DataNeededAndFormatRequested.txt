@@ -1,0 +1,87 @@
+#################################################################################################
+#########			Data requested to run the Northwest Atlantic Harp seal population Model		#########
+#################################################################################################
+
+#############
+# pregnancy #
+#############
+
+Provided as an annual number of female pregnant per age class (4 to 7 years old, then 8+) for a specific year.
+
+Data.frame with 4 columns including respectively
+1. Year
+2. Age (4 to 8) with 8 including 8+ individuals
+3. Total number of individual of the specific age class in the sample (see note below)
+4. Nb pregnant
+
+Note: For each sampling year, each age should be indicated (4 to 8), even if there were no animal of this age class sampled in a specific year. In this case, indicate NA in the columns 3 and 4 (i.e. total and nb pregnant)  
+Value for years with missing data will be estimated by a smoother applied on provided values (see model code Line 43, 44 [degoffree, nearestn] controling the smoothing factor)
+
+##################
+# pup production #
+##################
+
+Vector giving the number of pup produced each year (generally estimated from aerial surveys). Indicate NA for years with missing data
+
+# pup production Standard error #
+
+Vector of value corresponding to the standard errors around the estimated pup production numbers
+
+# initial population vector #
+
+Vector giving the number of individuals in each age classes (26 ages classes including number of newborns as the first element of the vector)
+
+############
+# removals #
+############
+
+
+The current version of the model deals with data provided in two files.
+
+The first file includes a data.frame with the following columns: YEAR arctic greenland canpup can1plus by1plus bypup
+with
+YEAR - each year from 1952 to 2019
+arctic - number of animal hunted in the arctic
+greenland - number of animals hunted in greenland
+canpup - number of pup hunted in Canada
+can1plus - number of 1 year old and older animals hunted in Canada
+by1plus - number of 1 year old and older animals removed in bycatch
+bypup - number of pup remved in bycatch
+
+The other file includes a vector with values corresponding to the proportion of pup in the greenland hunt for each year mentionned in the first file.
+
+Note 1: the proportion of pup in the arctic hunt is considered fixed and defined in the model code.
+Note 2: In the code the removals are multiplied by a struck and lost factor that is changing over years
+
+However, the code can be easily modified to deal with a simple data.frame giving the removals in term of number of pup and number of 1+ hunted each year.
+So in this case, the input should be a data.frame with three columns (Year, pup removals, 1+ removals)
+Struck and Lost factor can be included into the input numbers
+
+
+###################################
+# (optional) Environmental effect #
+###################################
+
+Vector of anomalies around a neutral effect (values centered around 1). In the model, this will act on the carrying capacity
+
+
+
+######################
+# Future predictions #
+######################
+
+Struck and Lost factor is hard coded and should be modified/desactivated if needed
+
+Effect of ice coverage (use forecast based on the RCP 4.5 model from IPCC https://doi.org/10.1016/j.polar.2018.11.008) acting on the pup survival. Currently, the effect is null if above a certain threshold and linearly linked to the proportion of sea ice extent.
+
+Future removals from arctic, greenland and bycatch are randomly sampled 
+Future canadian removals are given as "Quota" in the model function
+
+The proportion of pup in the removals is hard coded.
+
+Currently pregnancy rates for each age class are sampled from given values (hard coded) but several options are available (need to comment or uncomment the code).
+
+
+
+
+
